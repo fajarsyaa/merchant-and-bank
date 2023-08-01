@@ -1,10 +1,12 @@
 package handler
 
 import (
-	"final-project/config"
-	"final-project/manager"
-	"final-project/middleware"
+	"project/config"
+	"project/manager"
+	"project/middleware"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,9 +22,14 @@ type server struct {
 }
 
 func (s *server) Run() {
+	// session
+	store := cookie.NewStore([]byte("secret"))
+	s.srv.Use(sessions.Sessions("session", store))
+
 	s.srv.Use(middleware.LoggerMiddleware())
 
 	// handler
+	NewLoginHandler(s.srv, s.usecaseManager.GetLoginUsecase())
 
 	s.srv.Run(s.host)
 }

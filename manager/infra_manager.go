@@ -2,11 +2,14 @@ package manager
 
 import (
 	"database/sql"
-	"final-project/config"
 	"fmt"
 	"log"
+	"project/config"
 	"sync"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 )
 
@@ -29,6 +32,21 @@ func (im *infraManager) GetDB() *sql.DB {
 			log.Fatal("Cannot start app, Error when connect to DB ", err.Error())
 		}
 		im.db = db
+
+		driver, err := postgres.WithInstance(db, &postgres.Config{})
+		if err != nil {
+			fmt.Println(err)
+			panic("server error")
+		}
+
+		m, err := migrate.NewWithDatabaseInstance("file://database/migrations/", "postgres", driver)
+		if err != nil {
+			fmt.Println(err)
+			panic("server error")
+		}
+
+		m.Down()
+		m.Up()
 	})
 
 	return im.db

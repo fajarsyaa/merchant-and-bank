@@ -1,6 +1,6 @@
 package main
 
-import "final-project/handler"
+import "project/handler"
 
 func main() {
 	handler.NewServer().Run()
