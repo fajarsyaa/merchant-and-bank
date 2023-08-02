@@ -27,7 +27,7 @@ func (loginUsecase *loginUsecase) Login(cust *request.LoginRequestModel, ctx *gi
 	existSession := session.Get("Username")
 	if existSession != nil {
 		return nil, &utils.AppError{
-			ErrorCode:    1,
+			ErrorCode:    403,
 			ErrorMessage: fmt.Sprintf("You are already logged in as %v", existSession),
 		}
 	}
@@ -35,13 +35,7 @@ func (loginUsecase *loginUsecase) Login(cust *request.LoginRequestModel, ctx *gi
 	existData, err := loginUsecase.loginRepo.GetCustomerByUsername(cust.Username)
 	if err != nil {
 		return nil, &utils.AppError{
-			ErrorCode:    1,
-			ErrorMessage: "Username is not registered",
-		}
-	}
-	if existData == nil {
-		return nil, &utils.AppError{
-			ErrorCode:    1,
+			ErrorCode:    400,
 			ErrorMessage: "Username is not registered",
 		}
 	}
@@ -49,13 +43,14 @@ func (loginUsecase *loginUsecase) Login(cust *request.LoginRequestModel, ctx *gi
 	err = bcrypt.CompareHashAndPassword([]byte(existData.Password), []byte(cust.Password))
 	if err != nil {
 		return nil, &utils.AppError{
-			ErrorCode:    1,
+			ErrorCode:    400,
 			ErrorMessage: "Password does not match",
 		}
 	}
 
 	// Login session
 	session.Set("Username", existData.Username)
+	session.Set("CustomerID", existData.Id)
 	session.Save()
 
 	existData.Password = ""

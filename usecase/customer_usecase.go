@@ -11,6 +11,7 @@ import (
 
 type CustomerUseCase interface {
 	InsertCustomer(cust *model.CustomerModel) error
+	TopUpBalance(cust *model.CustomerModel) error
 }
 
 type customerUsecaseImpl struct {
@@ -28,11 +29,23 @@ func (custUsecase *customerUsecaseImpl) InsertCustomer(cust *model.CustomerModel
 	err = custUsecase.customerRepo.InsertCustomer(cust)
 	if err != nil {
 		return &utils.AppError{
-			ErrorCode:    1,
+			ErrorCode:    500,
 			ErrorMessage: "Internal Server Error",
 		}
 	}
 
+	return nil
+}
+
+func (custUsecase *customerUsecaseImpl) TopUpBalance(cust *model.CustomerModel) error {
+	err := custUsecase.customerRepo.TopUpBalance(cust.Id, cust.Balance)
+	if err != nil {
+		fmt.Printf("%v", err)
+		return &utils.AppError{
+			ErrorCode:    500,
+			ErrorMessage: "Internal Server Error",
+		}
+	}
 	return nil
 }
 

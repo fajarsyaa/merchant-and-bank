@@ -32,6 +32,7 @@ func (s *server) Run() {
 	NewLoginHandler(s.srv, s.usecaseManager.GetLoginUsecase())
 	NewCustomerHandler(s.srv, s.usecaseManager.GetCustomerUsecase())
 	NewTransactionHandler(s.srv, s.usecaseManager.GetTransactionUsecase())
+	NewMerchantHandler(s.srv, s.usecaseManager.GetMerchantUsecase())
 
 	s.srv.Run(s.host)
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"project/middleware"
 	"project/model/request"
 	"project/usecase"
 	"project/utils"
@@ -57,7 +58,7 @@ func (txHandler TransactionHandler) CreateTransaction(ctx *gin.Context) {
 		return
 	}
 
-	err = txHandler.txUsecase.InsertTransaction(customer)
+	err = txHandler.txUsecase.InsertTransaction(customer, ctx)
 
 	if err != nil {
 		appError := &utils.AppError{}
@@ -86,8 +87,8 @@ func NewTransactionHandler(srv *gin.Engine, txUsecase usecase.TransactionUseCase
 		txUsecase: txUsecase,
 	}
 
-	srv.POST("/transaction/create", txHandler.CreateTransaction)
-	srv.GET("/transactions", txHandler.GetAllTransaction)
+	srv.POST("/transaction/create", middleware.RequireToken(), txHandler.CreateTransaction)
+	srv.GET("/transactions", middleware.RequireToken(), txHandler.GetAllTransaction)
 
 	return txHandler
 }

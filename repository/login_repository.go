@@ -22,7 +22,7 @@ func (lgnRepo *loginRepoImpl) GetCustomerByUsername(username string) (*model.Cus
 		}
 	}
 
-	return nil, errors.New("user not found")
+	return nil, errors.New("customer not found")
 }
 
 func NewLoginRepo() (LoginRepo, error) {
