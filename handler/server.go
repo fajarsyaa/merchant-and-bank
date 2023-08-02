@@ -30,6 +30,8 @@ func (s *server) Run() {
 
 	// handler
 	NewLoginHandler(s.srv, s.usecaseManager.GetLoginUsecase())
+	NewCustomerHandler(s.srv, s.usecaseManager.GetCustomerUsecase())
+	NewTransactionHandler(s.srv, s.usecaseManager.GetTransactionUsecase())
 
 	s.srv.Run(s.host)
 }
@@ -37,8 +39,7 @@ func (s *server) Run() {
 func NewServer() Server {
 	c := config.NewConfig()
 
-	infra := manager.NewInfraManager(c)
-	repo := manager.NewRepoManager(infra)
+	repo := manager.NewRepoManager()
 	usecase := manager.NewUsecaseManager(repo)
 
 	srv := gin.Default()

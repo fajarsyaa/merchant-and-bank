@@ -1,0 +1,32 @@
+[
+    {
+        "Id": "MRC001",
+        "Name": "Merchant One",        
+        "NoRek": 123456789,
+        "Balance": 1000000
+    },
+    {
+        "Id": "MRC002",
+        "Name": "Merchant Two",        
+        "NoRek": 987654321,
+        "Balance": 1000000
+    },
+    {
+        "Id": "MRC003",
+        "Name": "Merchant Three",        
+        "NoRek": 555555555,
+        "Balance": 1000000
+    },
+    {
+        "Id": "MRC004",
+        "Name": "Merchant Four",        
+        "NoRek": 777777777,
+        "Balance": 1000000
+    },
+    {
+        "Id": "MRC005",
+        "Name": "Merchant Five",        
+        "NoRek": 444444444,
+        "Balance": 1000000
+    }
+]

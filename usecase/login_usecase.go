@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 	"project/model"
+	"project/model/request"
 	"project/repository"
 	"project/utils"
 
@@ -12,7 +13,7 @@ import (
 )
 
 type LoginUseCase interface {
-	Login(usr *model.LoginRequestModel, ctx *gin.Context) (*model.CustomerModel, error)
+	Login(cust *request.LoginRequestModel, ctx *gin.Context) (*model.CustomerModel, error)
 	Logout(ctx *gin.Context)
 }
 
@@ -20,7 +21,7 @@ type loginUsecase struct {
 	loginRepo repository.LoginRepo
 }
 
-func (loginUsecase *loginUsecase) Login(usr *model.LoginRequestModel, ctx *gin.Context) (*model.CustomerModel, error) {
+func (loginUsecase *loginUsecase) Login(cust *request.LoginRequestModel, ctx *gin.Context) (*model.CustomerModel, error) {
 	// Login session
 	session := sessions.Default(ctx)
 	existSession := session.Get("Username")
@@ -31,9 +32,12 @@ func (loginUsecase *loginUsecase) Login(usr *model.LoginRequestModel, ctx *gin.C
 		}
 	}
 
-	existData, err := loginUsecase.loginRepo.GetCustomerByUsername(usr.Username)
+	existData, err := loginUsecase.loginRepo.GetCustomerByUsername(cust.Username)
 	if err != nil {
-		return nil, fmt.Errorf("loginUsecase.GetUserByName(): %w", err)
+		return nil, &utils.AppError{
+			ErrorCode:    1,
+			ErrorMessage: "Username is not registered",
+		}
 	}
 	if existData == nil {
 		return nil, &utils.AppError{
@@ -42,7 +46,7 @@ func (loginUsecase *loginUsecase) Login(usr *model.LoginRequestModel, ctx *gin.C
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(existData.Password), []byte(usr.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(existData.Password), []byte(cust.Password))
 	if err != nil {
 		return nil, &utils.AppError{
 			ErrorCode:    1,

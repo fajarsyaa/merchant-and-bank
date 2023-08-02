@@ -1,0 +1,51 @@
+[
+    {
+        "Id": "CUS001",
+        "Username": "user1",
+        "Password": "$2a$12$l2CpaqOPl1HzVKXE6TY0A.3VZKn5WlHgjHqwm0BlyKIm88RqS8MyG",
+        "NoRek": "123456789",
+        "Balance": 0
+    },
+    {
+        "Id": "CUS002",
+        "Username": "user2",
+        "Password": "$2a$12$l2CpaqOPl1HzVKXE6TY0A.3VZKn5WlHgjHqwm0BlyKIm88RqS8MyG",
+        "NoRek": "987654321",
+        "Balance": 0
+    },
+    {
+        "Id": "CUS003",
+        "Username": "user3",
+        "Password": "$2a$12$l2CpaqOPl1HzVKXE6TY0A.3VZKn5WlHgjHqwm0BlyKIm88RqS8MyG",
+        "NoRek": "555555555",
+        "Balance": 0
+    },
+    {
+        "Id": "CUS004",
+        "Username": "user4",
+        "Password": "$2a$12$l2CpaqOPl1HzVKXE6TY0A.3VZKn5WlHgjHqwm0BlyKIm88RqS8MyG",
+        "NoRek": "777777777",
+        "Balance": 0
+    },
+    {
+        "Id": "CUS005",
+        "Username": "user5",
+        "Password": "$2a$12$l2CpaqOPl1HzVKXE6TY0A.3VZKn5WlHgjHqwm0BlyKIm88RqS8MyG",
+        "NoRek": "444444444",
+        "Balance": 0
+    },
+    {
+        "Id": "baec2d8c-1484-404d-94cf-e507dcfb6e51",
+        "Username": "wahyu",
+        "Password": "$2a$10$5CrHDI3dL3NvCilMpjkbeegfIlpwmEHzduqSs3UT6D2rs9ZMDHrYa",
+        "NoRek": "098709870987",
+        "Balance": 2000000
+    },
+    {
+        "Id": "aacc9e63-dc45-4b8e-a959-c66a287b4bae",
+        "Username": "wahyu",
+        "Password": "$2a$10$gzxC7KTSuUyVU6JPVTob/eU27Heo53aiNBCsGF4luzanutyyssNdW",
+        "NoRek": "098709870987",
+        "Balance": 2000000
+    }
+]

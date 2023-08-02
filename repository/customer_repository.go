@@ -1,130 +1,72 @@
 package repository
 
 import (
-	"database/sql"
-	"fmt"
+	"encoding/json"
+	"errors"
+	"os"
 	"project/model"
-	"project/utils"
 )
 
 type CustomerRepo interface {
-	InsertCustomer(cust *model.CustomerRequestModel) error
-	GetCustomerById(id string) (*model.CustomerModel, error)
-	GetCustomerByName(name string) (*model.CustomerModel, error)
-	GetAllCustomer() ([]*model.CustomerModel, error)
-	EditCustomerById(cust model.CustomerModel) error
-	GetCustomerByUserId(id string) (*model.CustomerModel, error)
-	GetCustomerWithMemberByIdCustomer(idCustomer string) (string, error)
+	GetCustomerByUsername(username string) (*model.CustomerModel, error)
+	InsertCustomer(customer *model.CustomerModel) error
 }
 
 type customerRepoImpl struct {
-	db *sql.DB
+	customers []model.CustomerModel
 }
 
-func (custRepo *customerRepoImpl) InsertCustomer(cust *model.CustomerRequestModel) error {
-	tx, err := custRepo.db.Begin()
-	if err != nil {
-		return fmt.Errorf("error on customerRepoImpl.InsertCustomer() 1 : %w", err)
-	}
-
-	qryUser := utils.INSERT_CUST
-	err = tx.QueryRow(qryUser, utils.UuidGenerate(), cust.Username, cust.Password, cust.Role, cust.Active).Scan(&cust.User_id)
-	if err != nil {
-		tx.Rollback()
-		return fmt.Errorf("error on customerRepoImpl.InsertCustomer() 2  : %w", err)
-	}
-
-	qry := utils.INSERT_CUST_USR
-	_, err = tx.Exec(qry, utils.UuidGenerate(), cust.User_id, cust.FullName, cust.NIK, cust.NoPhone, cust.Email, cust.Address, cust.CreatedAt, cust.CreatedBy)
-	if err != nil {
-		tx.Rollback()
-		return fmt.Errorf("error on customerRepoImpl.InsertCustomer() 3 : %w", err)
-	}
-
-	tx.Commit()
-	return nil
-}
-
-func (custRepo *customerRepoImpl) GetCustomerById(id string) (*model.CustomerModel, error) {
-	qry := utils.GET_CUST_ID
-	cust := &model.CustomerModel{}
-	err := custRepo.db.QueryRow(qry, id).Scan(&cust.ID, &cust.User_id, &cust.FullName, &cust.NIK, &cust.NoPhone, &cust.Email, &cust.Address, &cust.CreatedAt, &cust.UpdatedAt, &cust.CreatedBy, &cust.UpdatedBy)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
+func (custRepo *customerRepoImpl) GetCustomerByUsername(username string) (*model.CustomerModel, error) {
+	for _, cust := range custRepo.customers {
+		if cust.Username == username {
+			return &cust, nil
 		}
-		return nil, fmt.Errorf("error on customerRepoImpl.GetCustomerById() : %w", err)
 	}
-	return cust, nil
+	return nil, errors.New("user not found")
 }
 
-func (custRepo *customerRepoImpl) GetCustomerWithMemberByIdCustomer(idCustomer string) (string, error) {
-	qry := utils.GET_CUST_ID_MEMBER
-	var cust string
-	err := custRepo.db.QueryRow(qry, idCustomer).Scan(&cust)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", nil
+func (custRepo *customerRepoImpl) InsertCustomer(customer *model.CustomerModel) error {
+	found := false
+	for i, u := range custRepo.customers {
+		if u.Id == customer.Id {
+			custRepo.customers[i] = *customer
+			found = true
+			break
 		}
-		return "", fmt.Errorf("error on customerRepoImpl.GetCustomerById() : %w", err)
 	}
-	return cust, nil
-}
+	if !found {
+		custRepo.customers = append(custRepo.customers, *customer)
+	}
 
-func (custRepo *customerRepoImpl) GetCustomerByUserId(id string) (*model.CustomerModel, error) {
-	qry := utils.GET_CUST_USRID
-	cust := &model.CustomerModel{}
-	err := custRepo.db.QueryRow(qry, id).Scan(&cust.ID, &cust.User_id, &cust.FullName, &cust.NIK, &cust.NoPhone, &cust.Email, &cust.Address, &cust.CreatedAt, &cust.UpdatedAt, &cust.CreatedBy, &cust.UpdatedBy)
+	file, err := os.OpenFile("database/customer.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("error on customerRepoImpl.GetCustomerById() : %w", err)
+		return err
 	}
-	return cust, nil
-}
+	defer file.Close()
 
-func (custRepo *customerRepoImpl) GetAllCustomer() ([]*model.CustomerModel, error) {
-	qry := utils.GET_ALL_CUSTOMER
-	rows, err := custRepo.db.Query(qry)
+	err = json.NewEncoder(file).Encode(custRepo.customers)
 	if err != nil {
-		return nil, fmt.Errorf("error on customerRepoImpl.GetAllCustomer() : %w", err)
-	}
-	defer rows.Close()
-	var arrCustomer []*model.CustomerModel
-	for rows.Next() {
-		cust := &model.CustomerModel{}
-		rows.Scan(&cust.ID, &cust.User_id, &cust.FullName, &cust.NIK, &cust.NoPhone, &cust.Email, &cust.Address, &cust.CreatedAt, &cust.UpdatedAt, &cust.CreatedBy, &cust.UpdatedBy)
-		arrCustomer = append(arrCustomer, cust)
-	}
-	return arrCustomer, nil
-}
-
-func (custRepo *customerRepoImpl) GetCustomerByName(name string) (*model.CustomerModel, error) {
-	qry := utils.GET_CUST_NAME
-	cust := &model.CustomerModel{}
-	err := custRepo.db.QueryRow(qry, name).Scan(&cust.ID, &cust.User_id, &cust.FullName, &cust.NIK, &cust.NoPhone, &cust.Email, &cust.Address, &cust.CreatedAt, &cust.UpdatedAt, &cust.CreatedBy, &cust.UpdatedBy)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("error on customerRepoImpl.GetCustomerByName() : %w", err)
-	}
-	return cust, nil
-}
-
-func (custRepo *customerRepoImpl) EditCustomerById(cust model.CustomerModel) error {
-	qry := utils.EDIT_CUST_ID
-	_, err := custRepo.db.Exec(qry, cust.FullName, cust.NIK, cust.NoPhone, cust.Email, cust.Address, cust.UpdatedAt, cust.UpdatedBy, cust.ID)
-	if err != nil {
-		return fmt.Errorf("error on customerRepoImpl.EditCustomerById() 3 : %w", err)
+		return err
 	}
 
 	return nil
 }
 
-func NewCustomerRepo(db *sql.DB) CustomerRepo {
-	return &customerRepoImpl{
-		db: db,
+func NewCustomerRepo() (CustomerRepo, error) {
+	repo := &customerRepoImpl{}
+
+	// Open the JSON file
+	file, err := os.Open("database/customer.json")
+	if err != nil {
+		return nil, err
 	}
+	defer file.Close()
+
+	// Decode the file into the customers slice
+	err = json.NewDecoder(file).Decode(&repo.customers)
+	if err != nil {
+		return nil, err
+	}
+
+	return repo, nil
 }

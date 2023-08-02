@@ -2,8 +2,7 @@ package handler
 
 import (
 	"errors"
-	"fmt"
-	"project/model"
+	"project/model/request"
 	"project/usecase"
 	"project/utils"
 
@@ -17,7 +16,7 @@ type LoginHandler struct {
 }
 
 func (lgHandler LoginHandler) Login(ctx *gin.Context) {
-	loginReq := &model.LoginRequestModel{}
+	loginReq := &request.LoginRequestModel{}
 	err := ctx.ShouldBindJSON(&loginReq)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -47,13 +46,11 @@ func (lgHandler LoginHandler) Login(ctx *gin.Context) {
 	if err != nil {
 		appError := &utils.AppError{}
 		if errors.As(err, &appError) {
-			fmt.Printf("LoginHandler.GetUserByName() 1: %v", err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"success":      false,
 				"errorMessage": appError.Error(),
 			})
 		} else {
-			fmt.Printf("LoginHandler.GetUserByName() 2: %v", err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"success":      false,
 				"errorMessage": "An error occurred during login",
@@ -61,6 +58,7 @@ func (lgHandler LoginHandler) Login(ctx *gin.Context) {
 		}
 		return
 	}
+
 	if usr == nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -77,13 +75,6 @@ func (lgHandler LoginHandler) Login(ctx *gin.Context) {
 		})
 		return
 	}
-
-	http.SetCookie(ctx.Writer, &http.Cookie{
-		Name:     "token",
-		Path:     "/",
-		Value:    tokenJwt,
-		HttpOnly: true,
-	})
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": true,
