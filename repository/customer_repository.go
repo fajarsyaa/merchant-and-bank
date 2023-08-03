@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"project/model"
+	"project/utils"
 )
 
 type CustomerRepo interface {
@@ -140,15 +141,24 @@ func (custRepo *customerRepoImpl) Undo(id string, balance int) {
 }
 
 func (custRepo *customerRepoImpl) InsertCustomer(customer *model.CustomerModel) error {
-	found := false
-	for i, u := range custRepo.customers {
+	foundId := false
+	for _, u := range custRepo.customers {
 		if u.Id == customer.Id {
-			custRepo.customers[i] = *customer
-			found = true
-			break
+			foundId = true
+			return errors.New("failed register")
 		}
 	}
-	if !found {
+	foundNoRek := false
+	for _, u := range custRepo.customers {
+		if u.NoRek == customer.NoRek {
+			foundNoRek = true
+			return &utils.AppError{
+				ErrorCode:    500,
+				ErrorMessage: "no rek is already used",
+			}
+		}
+	}
+	if !foundId && !foundNoRek {
 		custRepo.customers = append(custRepo.customers, *customer)
 	}
 

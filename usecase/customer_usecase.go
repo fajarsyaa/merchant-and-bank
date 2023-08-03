@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 	"project/model"
 	"project/repository"
@@ -28,9 +29,17 @@ func (custUsecase *customerUsecaseImpl) InsertCustomer(cust *model.CustomerModel
 
 	err = custUsecase.customerRepo.InsertCustomer(cust)
 	if err != nil {
-		return &utils.AppError{
-			ErrorCode:    500,
-			ErrorMessage: "Internal Server Error",
+		appError := &utils.AppError{}
+		if errors.As(err, &appError) {
+			return &utils.AppError{
+				ErrorCode:    400,
+				ErrorMessage: appError.ErrorMessage,
+			}
+		} else {
+			return &utils.AppError{
+				ErrorCode:    500,
+				ErrorMessage: "Internal Server Error",
+			}
 		}
 	}
 
