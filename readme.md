@@ -1,8 +1,38 @@
-Sure, I can help you create a README file based on the information provided. Here's the README file for the "MNC Bank - API for Merchant & Bank":
 
-# MNC Bank - API for Merchant & Bank
+#  Bank - API for Merchant & Bank
 
-This repository contains the API documentation for MNC Bank's merchant and customer banking services.
+This repository contains the API documentation for  Bank merchant and customer banking services.
+
+## Setup Project
+steps to set up the project:
+
+1. **Download or Clone the Project:**
+   You can download the project as a zip file from the following link: [Merchant and Bank Project](https://github.com/fajarsyaa/merchant-and-bank/archive/refs/heads/main.zip). Alternatively, if you have Git installed, you can clone the project using the following command in your terminal or command prompt:
+   ```
+   git clone https://github.com/fajarsyaa/merchant-and-bank.git
+   ```
+
+2. **Navigate to the Project Directory:**
+   Open your terminal or command prompt and navigate to the root directory of the cloned or downloaded project:
+   ```
+   cd merchant-and-bank
+   ```
+
+3. **Install Dependencies:**
+   To ensure all the required dependencies are installed, run the following command to use Go modules and tidy the dependencies:
+   ```
+   go mod tidy
+   ```
+
+4. **Run the Project:**
+   Finally, start the application by running the following command:
+   ```
+   go run main.go
+   ```
+
+   This command will start the server, and you should see the application running locally. You can now interact with the API using the specified endpoints.
+
+Make sure you have Go installed on your system before running these commands. If you encounter any issues during the setup, please check the project documentation or consult the project's repository for further instructions.
 
 ## Table of Contents
 
@@ -18,7 +48,7 @@ This repository contains the API documentation for MNC Bank's merchant and custo
 
 ## Introduction
 
-This API provides endpoints for customers and merchants to access various banking functionalities offered by MNC Bank. The API supports actions such as customer login, logout, registration, creating transactions, viewing transaction history, and more.
+This API provides endpoints for customers and merchants to access various banking functionalities offered by Bank. The API supports actions such as customer login, logout, registration, creating transactions, viewing transaction history, and more.
 
 The API requires authentication using a Bearer Token, which is obtained during the login process.
 
@@ -40,6 +70,7 @@ Endpoint for customer login.
 }
 ```
 
+## 
 ### POST /logout
 
 Endpoint to log out the customer.
@@ -48,6 +79,7 @@ Endpoint to log out the customer.
 
 **Request Method:** POST
 
+## 
 ### POST /register
 
 Endpoint for customer registration if the user is not registered.
@@ -66,6 +98,7 @@ Endpoint for customer registration if the user is not registered.
 }
 ```
 
+## 
 ### POST /transaction/create
 
 Endpoint to create a new transaction. Only authenticated customers can perform transactions.
@@ -84,6 +117,7 @@ Endpoint to create a new transaction. Only authenticated customers can perform t
 }
 ```
 
+## 
 ### GET /transactions
 
 Endpoint to view all transaction history.
@@ -94,6 +128,7 @@ Endpoint to view all transaction history.
 
 **Authorization:** Bearer Token
 
+## 
 ### GET /merchants
 
 Endpoint to view all available merchants.
@@ -102,6 +137,7 @@ Endpoint to view all available merchants.
 
 **Request Method:** GET
 
+## 
 ### POST /topup
 
 Endpoint for customer top-up (add funds to the account).
