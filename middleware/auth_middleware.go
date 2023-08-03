@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type authHeader struct {
+type AuthHeader struct {
 	AuthorizationHeader string `header:"Authorization"`
 }
 
 func RequireToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// check exist token
-		h := &authHeader{}
+		h := &AuthHeader{}
 		if err := ctx.ShouldBindHeader(&h); err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"status":  false,
@@ -29,6 +29,15 @@ func RequireToken() gin.HandlerFunc {
 
 		// check token kosong
 		if tokenString == "" {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"status":  false,
+				"message": "Unauthorize",
+			})
+			ctx.Abort()
+			return
+		}
+
+		if utils.TokenExpire["token"] == tokenString {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"status":  false,
 				"message": "Unauthorize",

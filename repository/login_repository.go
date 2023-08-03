@@ -5,10 +5,12 @@ import (
 	"errors"
 	"os"
 	"project/model"
+	"project/utils"
 )
 
 type LoginRepo interface {
 	GetCustomerByUsername(username string) (*model.CustomerModel, error)
+	TokenBlock(token string)
 }
 
 type loginRepoImpl struct {
@@ -23,6 +25,10 @@ func (lgnRepo *loginRepoImpl) GetCustomerByUsername(username string) (*model.Cus
 	}
 
 	return nil, errors.New("customer not found")
+}
+
+func (lgnRepo *loginRepoImpl) TokenBlock(token string) {
+	utils.TokenExpire["token"] = token
 }
 
 func NewLoginRepo() (LoginRepo, error) {

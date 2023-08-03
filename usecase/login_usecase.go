@@ -2,10 +2,12 @@ package usecase
 
 import (
 	"fmt"
+	"project/middleware"
 	"project/model"
 	"project/model/request"
 	"project/repository"
 	"project/utils"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -14,7 +16,7 @@ import (
 
 type LoginUseCase interface {
 	Login(cust *request.LoginRequestModel, ctx *gin.Context) (*model.CustomerModel, error)
-	Logout(ctx *gin.Context)
+	Logout(ctx *gin.Context) error
 }
 
 type loginUsecase struct {
@@ -57,10 +59,21 @@ func (loginUsecase *loginUsecase) Login(cust *request.LoginRequestModel, ctx *gi
 	return existData, nil
 }
 
-func (loginUsecase *loginUsecase) Logout(ctx *gin.Context) {
+func (loginUsecase *loginUsecase) Logout(ctx *gin.Context) error {
+	h := &middleware.AuthHeader{}
+	if err := ctx.ShouldBindHeader(&h); err != nil {
+		return &utils.AppError{
+			ErrorCode:    403,
+			ErrorMessage: "Unautorized",
+		}
+	}
+	tokenString := strings.Replace(h.AuthorizationHeader, "Bearer ", "", -1)
+	loginUsecase.loginRepo.TokenBlock(tokenString)
+
 	session := sessions.Default(ctx)
 	session.Clear()
 	session.Save()
+	return nil
 }
 
 func NewLoginUseCase(loginRepo repository.LoginRepo) LoginUseCase {

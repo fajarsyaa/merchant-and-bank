@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"project/middleware"
 	"project/model/request"
 	"project/usecase"
 	"project/utils"
@@ -83,7 +84,15 @@ func (lgHandler LoginHandler) Login(ctx *gin.Context) {
 }
 
 func (lgHandler LoginHandler) Logout(ctx *gin.Context) {
-	lgHandler.lgUsecase.Logout(ctx)
+	err := lgHandler.lgUsecase.Logout(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"status":  false,
+			"message": "Unauthorize",
+		})
+		ctx.Abort()
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "Logout",
@@ -96,7 +105,7 @@ func NewLoginHandler(srv *gin.Engine, lgUsecase usecase.LoginUseCase) *LoginHand
 	}
 
 	srv.POST("/login", lgHandler.Login)
-	srv.POST("/logout", lgHandler.Logout)
+	srv.POST("/logout", middleware.RequireToken(), lgHandler.Logout)
 
 	return lgHandler
 }
