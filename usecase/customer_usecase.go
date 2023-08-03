@@ -13,6 +13,7 @@ import (
 type CustomerUseCase interface {
 	InsertCustomer(cust *model.CustomerModel) error
 	TopUpBalance(cust *model.CustomerModel) error
+	GetCustomerById(id string) (*model.CustomerModel, error)
 }
 
 type customerUsecaseImpl struct {
@@ -44,6 +45,10 @@ func (custUsecase *customerUsecaseImpl) InsertCustomer(cust *model.CustomerModel
 	}
 
 	return nil
+}
+
+func (custUsecase *customerUsecaseImpl) GetCustomerById(id string) (*model.CustomerModel, error) {
+	return custUsecase.customerRepo.GetCustomerById(id)
 }
 
 func (custUsecase *customerUsecaseImpl) TopUpBalance(cust *model.CustomerModel) error {

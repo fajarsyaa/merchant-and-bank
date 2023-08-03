@@ -99,6 +99,17 @@ Endpoint for customer registration if the user is not registered.
 ```
 
 ## 
+### GET /profile
+
+Endpoint to view customer profile.
+
+**URL:** `localhost:8000/profile`
+
+**Request Method:** GET
+
+**Authorization:** Bearer Token
+
+## 
 ### POST /transaction/create
 
 Endpoint to create a new transaction. Only authenticated customers can perform transactions.
