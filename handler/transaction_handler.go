@@ -88,7 +88,7 @@ func NewTransactionHandler(srv *gin.Engine, txUsecase usecase.TransactionUseCase
 	}
 
 	srv.POST("/transaction/create", middleware.RequireToken(), txHandler.CreateTransaction)
-	srv.GET("/transactions", middleware.RequireToken(), txHandler.GetAllTransaction)
+	srv.GET("/transactions", txHandler.GetAllTransaction)
 
 	return txHandler
 }
